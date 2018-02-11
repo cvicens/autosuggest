@@ -1,0 +1,4 @@
+test/
+*.old
+*/target/**
+.DS_Store
