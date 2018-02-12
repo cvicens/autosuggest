@@ -77,12 +77,14 @@ valiant-marker-193213    My First Project  341154997936
 
 ```
 export GCP_PROJECT_ID=autosuggest-194816
+export GCP_REGION=europe-west1
 export BUCKET_NAME=autosuggest-bucket
 export BEAM_PROJECT=autosuggest-beam
 export BEAM_PROJECT_GRP_ID=org.example
 export BEAM_PROJECT_PKG=org.example.autosuggest
 ```
 
+```
 APACHE
 mvn archetype:generate \
       -DarchetypeGroupId=org.apache.beam \
@@ -112,7 +114,7 @@ mvn archetype:generate \
 # Execute pipeline locally
 
 ```
-mvn compile exec:java -Dexec.mainClass=org.example.suggest.WordCount \
+mvn compile exec:java -Dexec.mainClass=org.example.autosuggest.WordCount \
      -Dexec.args="--inputFile=pom.xml --output=counts" -Pdirect-runner
 ```
 
@@ -121,7 +123,7 @@ mvn compile exec:java -Dexec.mainClass=org.example.suggest.WordCount \
  Cloud Dataflow, Compute Engine, Stackdriver Logging, Google Cloud Storage, Google Cloud Storage JSON, BigQuery, Google Cloud Pub/Sub, Google Cloud Datastore, and Google Cloud Resource Manager
 
 ```
-gcloud services enable dataflow.googleapis.com compute.googleapis.com stackdriver.googleapis.com storage-component.googleapis.com storage-api.googleapis.com bigquery-json.googleapis.com pubsub.googleapis.com datastore.googleapis.com cloudresourcemanager.googleapis.com
+gcloud services enable dataflow.googleapis.com compute.googleapis.com stackdriver.googleapis.com storage-component.googleapis.com storage-api.googleapis.com bigquery-json.googleapis.com pubsub.googleapis.com datastore.googleapis.com cloudresourcemanager.googleapis.com gcloud.container.clusters.create
 ```
 
 # Create a bucket
@@ -154,19 +156,8 @@ mvn compile exec:java \
       --gcpTempLocation=gs://${BUCKET_NAME}/temp/ \
       --output=gs://${BUCKET_NAME}/output \
       --runner=DataflowRunner \
+      --region=${GCP_REGION} \
       --jobName=${BEAM_PROJECT}"
-
-
-
-mvn compile exec:java \
-  -Dexec.mainClass=com.example.WordCount \
-  -Dexec.args="--project=autosuggest-194816 \
-  --stagingLocation=gs://autosuggest-194816/staging/ \
-  --output=gs://autosuggest-194816/output \
-  --runner=DataflowRunner \
-  --jobName=dataflow-intro"
-
-
 ```
 
 # List of APIs
