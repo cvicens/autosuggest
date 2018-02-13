@@ -1,7 +1,7 @@
 export PROJECT_NAME="autosuggest"
 export PROJECT_ID="autosuggest-194816"
 export IMAGE_NAME="autosuggest-app"
-export IMAGE_VERSION="v0.1.7"
+export IMAGE_VERSION="v0.1.8"
 export CONTAINER_NAME="autosuggest-app"
 
 docker build -t eu.gcr.io/$PROJECT_ID/$IMAGE_NAME:$IMAGE_VERSION .
