@@ -1,0 +1,42 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: autosuggest-app-deployment
+  labels:
+    app: autosuggest-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: autosuggest-app
+  template:
+    metadata:
+      labels:
+        app: autosuggest-app
+        tier: frontend
+    spec:
+      containers:
+      - name: autosuggest-app
+        image: "eu.gcr.io/autosuggest-194816/autosuggest-app:v0.1.0"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+          - name: http
+            containerPort: 8080
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: autosuggest-app-service
+spec:
+  selector:
+    app: autosuggest-app
+    tier: frontend
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+    nodePort: 30061
+  type: LoadBalancer

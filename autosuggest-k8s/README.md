@@ -32,89 +32,30 @@ gcloud container clusters create $CLUSTER_NAME \
   --disk-size=$DISK_SIZE
 ```
 
-## Create a Docker container image
+## Get credentials
 
-Next, create a file, also within named Dockerfile. A Dockerfile describes the image that you want to build. Docker container images can extend from other existing images so for this image, we’ll extend from an existing Node image.
+gcloud container clusters get-credentials autosuggest-cluster --zone europe-west1-d --project autosuggest-194816
 
-### Dockerfile
+## Get URL
+gcloud container clusters describe autosuggest-cluster --zone europe-west1-d 
 
-```
-FROM node:4.4
-EXPOSE 8080
-COPY server.js .
-CMD node server.js
-```
+## Get nodes
 
-This “recipe” for the Docker image will start from the official Node.js LTS image found on the Docker registry, expose port 8080, copy our ``server.js`` file to the image and start the Node server.
-Now build an image of your container by running docker build, tagging the image with the Google Container Registry repo for your $PROJECT_ID:
-
-```
-docker build -t gcr.io/$PROJECT_ID/$IMAGE_NAME:$IMAGE_VERSION .
-```
-
-Now there is a trusted source for getting an image of your containerized app.
-Let’s try your image out with Docker:
-
-```
-docker run -d -p 8080:8080 --name $CONTAINER_NAME gcr.io/$PROJECT_ID/$IMAGE_NAME:$IMAGE_VERSION
-```
-
-Visit your app in the browser, or use curl or wget if you’d like :
-
-```
-curl http://localhost:8080
-```
-
-You should see Hello World!
-Note: If you receive a Connection refused message from Docker for Mac, ensure you are using the latest version of Docker (1.12 or later). Alternatively, if you are using Docker Toolbox on OSX, make sure you are using the VM’s IP and not localhost:
-curl "http://$(docker-machine ip YOUR-VM-MACHINE-NAME):8080"
-Let’s now stop the container. You can list the docker containers with:
-
-```
-docker ps
-```
-
-You should see something like this:
-
-```
-CONTAINER ID        IMAGE                                 COMMAND                  NAMES
-c5b6d4b9f36d        gcr.io/$PROJECT_ID/hello-node:v1      "/bin/sh -c 'node ser"   hello_tutorial
-```
-
-Now stop the running container with
-
-```
-docker stop $CONTAINER_NAME
-```
-
-Now that the image works as intended and is all tagged with your $PROJECT_ID, we can push it to the Google Container Registry, a private repository for your Docker images accessible from every Google Cloud project (but also from outside Google Cloud Platform) :
-
-```
-gcloud docker push gcr.io/$PROJECT_ID/$IMAGE_NAME:$IMAGE_VERSION
-```
-
-```
-WARNING: The '--' argument must be specified between gcloud specific args on the left and DOCKER_ARGS on the right. IMPORTANT: previously, commands allowed the omission of the --, and unparsed arguments were treated as implementation args. This usage is being deprecated and will be removed in March 2017.
-This will be strictly enforced in March 2017. Use 'gcloud beta docker' to see new behavior.
-Using 'push gcr.io/pivotal-mile-160908/viralmar-site:v1' for DOCKER_ARGS.
-The push refers to a repository [gcr.io/pivotal-mile-160908/viralmar-site]
-13ec01fef4ee: Pushed
-20a6f9d228c0: Pushed
-80c332ac5101: Pushed
-04dc8c446a38: Pushed
-1050aff7cfff: Pushed
-66d8e5ee400c: Pushed
-2f71b45e4e25: Pushed
-v1: digest: sha256:aa29c722f3f9f26bd58220e66b5310c74421ee9cb9e0427ecedaaf3a14019877 size: 1794
-```
-
-If all goes well, you should be able to see the container image listed in the console: Compute > Container Engine > Container Registry. We now have a project-wide Docker image available which Kubernetes can access and orchestrate.
-
-If you see an error message like the following: denied: Unable to create the repository, please check that you have access to do so. ensure that you are pushing the image to Container Registry with the correct user credentials, use gcloud auth list and then gcloud config set account example@gmail.com.
+kubectl get nodes
+NAME                                                 STATUS    ROLES     AGE       VERSION
+gke-autosuggest-cluster-default-pool-dae34eb8-2qn5   Ready     <none>    1d        v1.7.12-gke.1
+gke-autosuggest-cluster-default-pool-dae34eb8-hp17   Ready     <none>    1d        v1.7.12-gke.1
 
 
+## Create a namespace
 
-Note: Docker for Windows, Version 1.12 or 1.12.1, does not yet support this procedure. Instead, it replies with the message ‘denied: Unable to access the repository; please check that you have permission to access it’. A bugfix is available at http://stackoverflow.com/questions/39277986/unable-to-push-to-google-container-registry-unable-to-access-the-repository?answertab=votes#tab-top
+kubectl create namespace autosuggest-dev
+
+## Create frontend app
+kubectl create -n autosuggest-dev -f ./autosuggest-app.yaml
+kubectl expose deployment autosuggest-app-deployment --type=LoadBalancer --name=autosuggest-app-service
+
+
 
 ## Create your Kubernetes Cluster
 
