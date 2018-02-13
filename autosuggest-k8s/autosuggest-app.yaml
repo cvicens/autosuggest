@@ -1,3 +1,25 @@
+- kind: Secret
+  apiVersion: v1
+  metadata:
+    name: ${NAME}
+    annotations:
+      template.openshift.io/expose-admin_password: '{.data[''database-admin-password'']}'
+      template.openshift.io/expose-password: '{.data[''database-password'']}'
+      template.openshift.io/expose-username: '{.data[''database-user'']}'
+  stringData:
+    database-admin-password: ${MONGODB_ADMIN_PASSWORD}
+    database-password: ${MONGODB_PASSWORD}
+    database-user: ${MONGODB_USER}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: catalog-db-secret
+type: Opaque
+data:
+  username: YWRtaW4=
+  password: MWYyZDFlMmU2N2Rm
+---
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
@@ -17,7 +39,7 @@ spec:
     spec:
       containers:
       - name: autosuggest-app
-        image: "eu.gcr.io/autosuggest-194816/autosuggest-app:v0.1.0"
+        image: "eu.gcr.io/autosuggest-194816/autosuggest-app:latest"
         resources:
           requests:
             cpu: 100m

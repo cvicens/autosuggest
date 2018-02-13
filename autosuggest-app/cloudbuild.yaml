@@ -1,0 +1,10 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t', 'eu.gcr.io/$PROJECT_ID/autosuggest-app:$TAG_NAME', '.' ]
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'tag', 'eu.gcr.io/$PROJECT_ID/autosuggest-app:$TAG_NAME', 'eu.gcr.io/$PROJECT_ID/autosuggest-app:latest' ]
+
+images:
+  - 'eu.gcr.io/$PROJECT_ID/autosuggest-app:$TAG_NAME'
+  - 'eu.gcr.io/$PROJECT_ID/autosuggest-app:latest'
