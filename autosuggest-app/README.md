@@ -1,8 +1,9 @@
 export PROJECT_NAME="autosuggest"
 export PROJECT_ID="autosuggest-194816"
 export IMAGE_NAME="autosuggest-app"
-export IMAGE_VERSION="v0.1.8"
 export CONTAINER_NAME="autosuggest-app"
+
+export IMAGE_VERSION="v0.1.8" ; git commit -a -m "Docker fix" ;git tag -a ${IMAGE_VERSION} -m "version ${IMAGE_VERSION}" ; git push origin master ${IMAGE_VERSION}
 
 docker build -t eu.gcr.io/$PROJECT_ID/$IMAGE_NAME:$IMAGE_VERSION .
 
