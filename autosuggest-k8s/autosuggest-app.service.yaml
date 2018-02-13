@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: autosuggest-app-service
+spec:
+  selector:
+    app: autosuggest-app
+    tier: frontend
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+    nodePort: 30061
+  type: LoadBalancer

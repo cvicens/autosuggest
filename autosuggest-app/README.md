@@ -9,5 +9,3 @@ docker build -t eu.gcr.io/$PROJECT_ID/$IMAGE_NAME:$IMAGE_VERSION .
 docker run -it --rm -p 8080:8080 --name $CONTAINER_NAME eu.gcr.io/$PROJECT_ID/$IMAGE_NAME:$IMAGE_VERSION
 
 gcloud docker -- push eu.gcr.io/$PROJECT_ID/$IMAGE_NAME:$IMAGE_VERSION
-
-
